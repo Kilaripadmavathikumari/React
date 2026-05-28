@@ -1,20 +1,39 @@
-let events=[];
-let editIndex=-1;
-let input=document.getElementById("eventInput");
-let list=document.getElementById("eventList");
-let message=document.getElementById("message"),button=document.getElementById("eventButton");
-button.onclick=function(){
-let name=input.value.trim();
-if(name==""){message.innerHTML="Please enter event name";return;}
-if(editIndex==-1){events.push(name);}
-else{events[editIndex]=name;editIndex=-1;button.innerHTML="Add Event";}
-input.value="";
-message.innerHTML="";
-showEvents();
+var eventNames = []
+function addEvent()
+{
+  var input = document.getElementById("eventInput")
+  var eventName = input.value.trim()
+  if (eventName == "")
+  {
+    alert("Please enter event name")
+    return
+  }
+  eventNames.push(eventName)
+  input.value = ""
+  showEvents()
 }
-function showEvents(){
-list.innerHTML="";
-for(let i=0;i<events.length;i++)list.innerHTML+=`<li>${events[i]} <button onclick="editEvent(${i})">Edit</button> <button onclick="deleteEvent(${i})">Delete</button></li>`;
+function showEvents()
+{
+  var list = document.getElementById("eventList")
+  list.innerHTML = ""
+  for (var i = 0; i < eventNames.length; i++)
+  {
+    var item = document.createElement("li")
+    item.innerHTML = eventNames[i] + " "
+    item.innerHTML += "<button onclick='editEvent(" + i + ")'>Edit</button> "
+    item.innerHTML += "<button onclick='deleteEvent(" + i + ")'>Delete</button>"
+    list.appendChild(item)
+  }
 }
-function editEvent(i){input.value=events[i];editIndex=i;button.innerHTML="Update Event";}
-function deleteEvent(i){events.splice(i,1);showEvents();}
+function editEvent(index)
+{
+  var newName = prompt("Edit event name", eventNames[index])
+  if (newName == null || newName.trim() == "") return
+  eventNames[index] = newName.trim()
+  showEvents()
+}
+function deleteEvent(index)
+{
+  eventNames.splice(index, 1)
+  showEvents()
+}
