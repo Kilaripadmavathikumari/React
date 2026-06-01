@@ -1,14 +1,19 @@
 var events=[];
 function addEvent(){
   var input=document.getElementById("eventInput");
+  var error=document.getElementById("errorMessage");
   var name=input.value.trim();
+  error.textContent="";
   if(name==""){
-    alert("Please enter event name");
+    error.textContent="Please enter event name.";
     return;
   }
   events.push(name);
   input.value="";
   showEvents();
+}
+function clearError(){
+  document.getElementById("errorMessage").textContent="";
 }
 function showEvents(){
   var list=document.getElementById("eventList");
