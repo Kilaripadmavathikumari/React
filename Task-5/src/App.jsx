@@ -16,7 +16,7 @@ export default function App() {
   const [theme, setTheme] = useState('light');
   const [editingEvent, setEditingEvent] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('taskFiveEvents', JSON.stringify(events));
@@ -39,6 +39,7 @@ export default function App() {
 
     setEvents(nextEvents);
     setEditingEvent(null);
+    setSelectedIds([]);
   };
 
   const toggleSelected = id => {
@@ -57,12 +58,13 @@ export default function App() {
     setSelectedIds(allSelected ? selectedHiddenIds : [...selectedHiddenIds, ...visibleIds]);
   };
 
-  const confirmDeleteSelected = () => {
+  const confirmDelete = () => {
     setEvents(events.filter(event => !selectedIds.includes(event.id)));
     setSelectedIds([]);
-    setShowDeleteConfirm(false);
+    setShowDeletePopup(false);
   };
 
+  const clearSelected = () => setSelectedIds([]);
   const openHome = () => setPage('home');
   const openEvents = () => setPage('events');
   const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
@@ -95,19 +97,14 @@ export default function App() {
                     onChange={event => setSearch(event.target.value)}
                   />
                 </label>
-                <button
-                  className="danger-soft"
-                  disabled={!selectedIds.length}
-                  onClick={() => setShowDeleteConfirm(true)}
-                >
-                  Delete Selected
-                </button>
               </div>
 
               <EventForm onAdd={addEvent} />
               <EventList
                 events={filteredEvents}
                 selectedIds={selectedIds}
+                onClearSelected={clearSelected}
+                onDeleteSelected={() => setShowDeletePopup(true)}
                 onEdit={setEditingEvent}
                 onToggleAll={toggleAllVisible}
                 onToggleSelected={toggleSelected}
@@ -125,14 +122,14 @@ export default function App() {
         />
       )}
 
-      {showDeleteConfirm && (
+      {showDeletePopup && (
         <div className="modal-backdrop">
-          <div className="delete-confirm">
-            <h2>Are you sure?</h2>
-            <p>Do you want to delete selected events?</p>
+          <div className="edit-card delete-card">
+            <h2>Delete Events?</h2>
+            <p>Are you sure you want to delete selected events?</p>
             <div className="edit-actions">
-              <button type="button" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
-              <button type="button" className="danger-soft" onClick={confirmDeleteSelected}>OK</button>
+              <button type="button" onClick={() => setShowDeletePopup(false)}>Cancel</button>
+              <button className="primary" type="button" onClick={confirmDelete}>Delete</button>
             </div>
           </div>
         </div>

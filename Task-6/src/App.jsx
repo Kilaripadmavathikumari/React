@@ -16,15 +16,18 @@ export default function App() {
   const [theme, setTheme] = useState('light');
   const [editingEvent, setEditingEvent] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('taskFiveEvents', JSON.stringify(events));
   }, [events]);
 
+  const isEventsPage = page === 'events';
+
   const filteredEvents = events.filter(event => {
-    const matchesSearch = event.name.toLowerCase().includes(search.toLowerCase());
-    const matchesTab = tab === 'All' || event.status === tab;
-    return matchesSearch && matchesTab;
+    const nameMatches = event.name.toLowerCase().includes(search.toLowerCase());
+    const tabMatches = tab === 'All' || event.status === tab;
+    return nameMatches && tabMatches;
   });
 
   const addEvent = event => {
@@ -32,20 +35,19 @@ export default function App() {
   };
 
   const updateEvent = updatedEvent => {
-    const nextEvents = events.map(event => (
+    setEvents(events.map(event => (
       event.id === updatedEvent.id ? updatedEvent : event
-    ));
-
-    setEvents(nextEvents);
+    )));
     setEditingEvent(null);
+    setSelectedIds([]);
   };
 
   const toggleSelected = id => {
-    if (selectedIds.includes(id)) {
-      setSelectedIds(selectedIds.filter(selectedId => selectedId !== id));
-    } else {
-      setSelectedIds([...selectedIds, id]);
-    }
+    const isSelected = selectedIds.includes(id);
+    setSelectedIds(isSelected
+      ? selectedIds.filter(selectedId => selectedId !== id)
+      : [...selectedIds, id]
+    );
   };
 
   const toggleAllVisible = () => {
@@ -56,24 +58,25 @@ export default function App() {
     setSelectedIds(allSelected ? selectedHiddenIds : [...selectedHiddenIds, ...visibleIds]);
   };
 
-  const deleteSelected = () => {
+  const confirmDelete = () => {
     setEvents(events.filter(event => !selectedIds.includes(event.id)));
     setSelectedIds([]);
+    setShowDeletePopup(false);
   };
 
-  const openHome = () => setPage('home');
-  const openEvents = () => setPage('events');
-  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
+  const clearSelected = () => setSelectedIds([]);
 
   return (
     <div className={`app-page ${theme}-theme`}>
-      <Navbar theme={theme} onHome={openHome} onThemeChange={toggleTheme} />
+      <Navbar
+        theme={theme}
+        onHome={() => setPage('home')}
+        onThemeChange={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+      />
 
       <div className="app-shell">
-        <main className={page === 'events' ? 'main-content events-view' : 'main-content'}>
-          {page === 'home' ? (
-            <HomePanel total={events.length} onOpenEvents={openEvents} />
-          ) : (
+        <main className={isEventsPage ? 'main-content events-view' : 'main-content'}>
+          {isEventsPage ? (
             <section className="event-panel">
               <div className="panel-header">
                 <h1>Events</h1>
@@ -93,24 +96,21 @@ export default function App() {
                     onChange={event => setSearch(event.target.value)}
                   />
                 </label>
-                <button
-                  className="danger-soft"
-                  disabled={!selectedIds.length}
-                  onClick={deleteSelected}
-                >
-                  Delete Selected
-                </button>
               </div>
 
               <EventForm onAdd={addEvent} />
               <EventList
                 events={filteredEvents}
                 selectedIds={selectedIds}
+                onClearSelected={clearSelected}
+                onDeleteSelected={() => setShowDeletePopup(true)}
                 onEdit={setEditingEvent}
                 onToggleAll={toggleAllVisible}
                 onToggleSelected={toggleSelected}
               />
             </section>
+          ) : (
+            <HomePanel total={events.length} onOpenEvents={() => setPage('events')} />
           )}
         </main>
       </div>
@@ -121,6 +121,20 @@ export default function App() {
           onCancel={() => setEditingEvent(null)}
           onSave={updateEvent}
         />
+      )}
+
+      {showDeletePopup && (
+        <div className="modal-backdrop">
+          <div className="edit-card delete-card">
+            <h2>Delete Events?</h2>
+            <p>Are you sure you want to delete selected events?</p>
+
+            <div className="edit-actions">
+              <button type="button" onClick={() => setShowDeletePopup(false)}>Cancel</button>
+              <button className="primary" type="button" onClick={confirmDelete}>Delete</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

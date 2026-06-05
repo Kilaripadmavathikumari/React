@@ -220,9 +220,8 @@
 }
 
 .panel-tools {
-  grid-template-columns: minmax(220px, 360px) auto;
-  justify-content: space-between;
-  margin: 22px 0;
+  grid-template-columns: minmax(220px, 360px);
+  margin: 16px 0;
 }
 
 .search-box {
@@ -270,26 +269,12 @@
   margin-bottom: 24px;
 }
 
-.primary,
-.danger-soft {
+.primary {
   padding: 14px 20px;
   color: white;
+  background: #0f766e;
   border-radius: 8px;
   font-weight: 900;
-}
-
-.primary {
-  background: #0f766e;
-}
-
-.danger-soft {
-  background: #be123c;
-  white-space: nowrap;
-}
-
-.danger-soft:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
 }
 
 .table-card {
@@ -311,20 +296,20 @@ table {
 }
 
 .key-col {
-  width: 82px;
+  width: 112px;
+}
+
+.name-col {
+  width: 52%;
 }
 
 .status-col {
-  width: 142px;
-}
-
-.actions-col {
-  width: 110px;
+  width: 170px;
 }
 
 th,
 td {
-  padding: 18px 14px;
+  padding: 14px;
   text-align: left;
   border-bottom: 1px solid #e2e8f0;
 }
@@ -339,6 +324,109 @@ thead th {
 .row-check {
   width: 20px;
   height: 20px;
+}
+
+.row-action-wrap {
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+
+.row-check-button {
+  position: relative;
+  display: block;
+  padding: 0;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 3px;
+}
+
+.row-check-button.selected {
+  background: #050505;
+  border-color: #050505;
+}
+
+.row-check-button.selected::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 11px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.bulk-action-popover {
+  position: fixed;
+  left: 50%;
+  bottom: 34px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  min-height: 62px;
+  color: white;
+  background: #030303;
+  border-radius: 999px;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.28);
+  transform: translateX(-50%);
+  overflow: hidden;
+}
+
+.bulk-close,
+.bulk-action {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  background: transparent;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.bulk-close {
+  width: 58px;
+  justify-content: center;
+  padding: 0;
+  color: #9ca3af;
+}
+
+.bulk-count {
+  padding-right: 28px;
+  color: #c7c7c7;
+  font-size: 18px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.bulk-action {
+  padding: 0 34px;
+}
+
+.bulk-divider {
+  width: 1px;
+  height: 36px;
+  background: #2d2d2d;
+}
+
+.bulk-action-popover svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.edit-icon {
+  color: #facc15;
+}
+
+.delete-icon {
+  color: #f97316;
 }
 
 .name-cell {
@@ -367,14 +455,6 @@ thead th {
 .done {
   color: #166534;
   background: #dcfce7;
-}
-
-.actions-cell button {
-  padding: 9px 12px;
-  color: #0f172a;
-  background: #e2e8f0;
-  border-radius: 8px;
-  font-weight: 800;
 }
 
 .empty-row {
@@ -412,23 +492,14 @@ thead th {
   box-shadow: 0 28px 60px rgba(15, 23, 42, 0.22);
 }
 
-.delete-confirm {
-  width: min(360px, 100%);
-  display: grid;
-  gap: 12px;
-  padding: 24px;
-  border-radius: 16px;
-  background: white;
-  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.22);
-}
-
 .edit-card h2 {
   margin: 0;
 }
 
-.delete-confirm h2,
-.delete-confirm p {
+.delete-card p {
   margin: 0;
+  color: #64748b;
+  font-weight: 800;
 }
 
 .edit-actions {
@@ -449,11 +520,6 @@ thead th {
   background: #0f766e;
 }
 
-.edit-actions .danger-soft {
-  color: white;
-  background: #be123c;
-}
-
 .dark-theme {
   color: #f8fafc;
   background: #101827;
@@ -466,14 +532,14 @@ thead th {
 
 .dark-theme .home-panel,
 .dark-theme .event-panel,
-.dark-theme .edit-card,
-.dark-theme .delete-confirm {
+.dark-theme .edit-card {
   color: #f8fafc;
   background: #182234;
 }
 
 .dark-theme .nav-right small,
 .dark-theme .brand small,
+.dark-theme .delete-card p,
 .dark-theme .home-panel p,
 .dark-theme .home-grid span {
   color: #cbd5e1;
@@ -495,6 +561,16 @@ thead th {
   color: #f8fafc;
   background: #0f172a;
   border-color: #334155;
+}
+
+.dark-theme .row-check-button {
+  background: #0f172a;
+  border-color: #475569;
+}
+
+.dark-theme .row-check-button.selected {
+  background: #050505;
+  border-color: #050505;
 }
 
 .dark-theme .tab {
@@ -540,5 +616,20 @@ thead th {
   .panel-tools,
   .event-form {
     grid-template-columns: 1fr;
+  }
+
+  .bulk-action-popover {
+    bottom: 18px;
+    width: calc(100% - 28px);
+    justify-content: center;
+  }
+
+  .bulk-count,
+  .bulk-action {
+    font-size: 15px;
+  }
+
+  .bulk-action {
+    padding: 0 14px;
   }
 }
