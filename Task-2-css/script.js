@@ -17,11 +17,21 @@ function addEvent() {
 function clearError() {
   document.getElementById("errorMessage").textContent = "";
 }
+function makeButton(className, text, onClick) {
+  var button = document.createElement("button");
+  button.className = className;
+  button.textContent = text;
+  button.onclick = onClick;
+  return button;
+}
 function showEvents() {
   var list = document.getElementById("eventList");
   list.innerHTML = "";
   for (let i = 0; i < events.length; i++) {
     var li = document.createElement("li");
+    var controls = document.createElement("span");
+    controls.className = "actions";
+
     if (editingIndex === i) {
       li.className = "editing";
       var editInput = document.createElement("input");
@@ -32,38 +42,17 @@ function showEvents() {
       editInput.placeholder = "Edit event name";
       editInput.oninput = clearError;
       li.appendChild(editInput);
-      var controls = document.createElement("span");
-      controls.className = "actions";
-      var saveBtn = document.createElement("button");
-      saveBtn.className = "save";
-      saveBtn.textContent = "Save";
-      saveBtn.onclick = function () { saveEdit(i); };
-      var cancelBtn = document.createElement("button");
-      cancelBtn.className = "cancel";
-      cancelBtn.textContent = "Cancel";
-      cancelBtn.onclick = cancelEdit;
-      controls.appendChild(saveBtn);
-      controls.appendChild(cancelBtn);
-      li.appendChild(controls);
+      controls.appendChild(makeButton("save", "Save", function () { saveEdit(i); }));
+      controls.appendChild(makeButton("cancel", "Cancel", cancelEdit));
     } else {
       var text = document.createElement("span");
       text.className = "event-text";
       text.textContent = events[i];
       li.appendChild(text);
-      var controls = document.createElement("span");
-      controls.className = "actions";
-      var editBtn = document.createElement("button");
-      editBtn.className = "edit";
-      editBtn.textContent = "Edit";
-      editBtn.onclick = function () { editEvent(i); };
-      var deleteBtn = document.createElement("button");
-      deleteBtn.className = "delete";
-      deleteBtn.textContent = "Delete";
-      deleteBtn.onclick = function () { deleteEvent(i); };
-      controls.appendChild(editBtn);
-      controls.appendChild(deleteBtn);
-      li.appendChild(controls);
+      controls.appendChild(makeButton("edit", "Edit", function () { editEvent(i); }));
+      controls.appendChild(makeButton("delete", "Delete", function () { deleteEvent(i); }));
     }
+    li.appendChild(controls);
     list.appendChild(li);
   }
   if (editingIndex !== -1) {
