@@ -1,11 +1,6 @@
 import { useState } from 'react';
 
-const defaultOrganizer = {
-  firstName: 'Padma',
-  lastName: '',
-  phone: '',
-  email: '',
-};
+const defaultOrganizer = { firstName: 'Padma', lastName: '', phone: '', email: '' };
 
 const organizerFields = [
   ['firstName', 'First name'],
@@ -14,13 +9,14 @@ const organizerFields = [
   ['email', 'Email (optional)'],
 ];
 
-export default function Navbar({ theme, onHome, onThemeChange }) {
+export default function Navbar({ theme, onHome, onOrganizerChange, onThemeChange }) {
   const [organizer, setOrganizer] = useState(getSavedOrganizer);
   const [draft, setDraft] = useState(organizer);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState('');
-  const displayName = `${organizer.firstName.split(' ')[0]} ${organizer.lastName.charAt(0)}`.trim() || 'Organizer';
-  const avatarLetters = `${organizer.firstName.charAt(0)}${organizer.lastName.charAt(0)}`.toUpperCase();
+  const { firstName, lastName } = organizer;
+  const displayName = `${firstName.split(' ')[0]} ${lastName.charAt(0)}`.trim() || 'Organizer';
+  const avatarLetters = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 
   const openOrganizer = () => {
     setDraft(organizer);
@@ -44,6 +40,7 @@ export default function Navbar({ theme, onHome, onThemeChange }) {
     };
 
     setOrganizer(nextOrganizer);
+    onOrganizerChange(nextOrganizer);
     localStorage.setItem('taskFiveOrganizer', JSON.stringify(nextOrganizer));
     setIsEditing(false);
   };

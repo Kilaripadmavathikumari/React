@@ -5,8 +5,10 @@ import EventForm from './components/EventForm.jsx';
 import EventList from './components/EventList.jsx';
 import HomePanel from './components/HomePanel.jsx';
 import Navbar from './components/Navbar.jsx';
+import { statuses } from './components/StatusSelect.jsx';
 
-const statusTabs = ['All', 'Todo', 'In Progress', 'Done'];
+const statusTabs = ['All', ...statuses];
+const defaultOrganizer = { firstName: 'Padma', lastName: '', phone: '', email: '' };
 
 export default function App() {
   const [events, setEvents] = useState(getSavedEvents);
@@ -17,6 +19,8 @@ export default function App() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [organizer, setOrganizer] = useState(getSavedOrganizer);
+  const organizerName = `${organizer.firstName} ${organizer.lastName}`.trim();
 
   useEffect(() => {
     localStorage.setItem('taskFiveEvents', JSON.stringify(events));
@@ -24,11 +28,10 @@ export default function App() {
 
   const isEventsPage = page === 'events';
 
-  const filteredEvents = events.filter(event => {
-    const nameMatches = event.name.toLowerCase().includes(search.toLowerCase());
-    const tabMatches = tab === 'All' || event.status === tab;
-    return nameMatches && tabMatches;
-  });
+  const filteredEvents = events.filter(event =>
+    event.name.toLowerCase().includes(search.toLowerCase())
+      && (tab === 'All' || event.status === tab)
+  );
 
   const addEvent = event => {
     setEvents([...events, { id: crypto.randomUUID(), ...event }]);
@@ -42,13 +45,11 @@ export default function App() {
     setSelectedIds([]);
   };
 
-  const toggleSelected = id => {
-    const isSelected = selectedIds.includes(id);
-    setSelectedIds(isSelected
+  const toggleSelected = id => setSelectedIds(
+    selectedIds.includes(id)
       ? selectedIds.filter(selectedId => selectedId !== id)
       : [...selectedIds, id]
-    );
-  };
+  );
 
   const toggleAllVisible = () => {
     const visibleIds = filteredEvents.map(event => event.id);
@@ -71,6 +72,7 @@ export default function App() {
       <Navbar
         theme={theme}
         onHome={() => setPage('home')}
+        onOrganizerChange={setOrganizer}
         onThemeChange={() => setTheme(theme === 'light' ? 'dark' : 'light')}
       />
 
@@ -110,17 +112,13 @@ export default function App() {
               />
             </section>
           ) : (
-            <HomePanel total={events.length} onOpenEvents={() => setPage('events')} />
+            <HomePanel organizer={organizerName} total={events.length} onOpenEvents={() => setPage('events')} />
           )}
         </main>
       </div>
 
       {editingEvent && (
-        <EditForm
-          event={editingEvent}
-          onCancel={() => setEditingEvent(null)}
-          onSave={updateEvent}
-        />
+        <EditForm event={editingEvent} onCancel={() => setEditingEvent(null)} onSave={updateEvent} />
       )}
 
       {showDeletePopup && (
@@ -158,4 +156,8 @@ function StatusTabs({ activeTab, onChange }) {
 
 function getSavedEvents() {
   return JSON.parse(localStorage.getItem('taskFiveEvents')) || [];
+}
+
+function getSavedOrganizer() {
+  return JSON.parse(localStorage.getItem('taskFiveOrganizer')) || defaultOrganizer;
 }

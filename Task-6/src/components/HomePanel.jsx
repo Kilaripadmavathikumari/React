@@ -1,7 +1,7 @@
-export default function HomePanel({ total, onOpenEvents }) {
+export default function HomePanel({ organizer, total, onOpenEvents }) {
   const cards = [
     [total, 'Total Events'],
-    ['Padma', 'Organizer'],
+    [organizer, 'Organizer'],
     ['Today', 'Workspace Status'],
   ];
 

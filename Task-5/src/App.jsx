@@ -5,8 +5,9 @@ import EventForm from './components/EventForm.jsx';
 import EventList from './components/EventList.jsx';
 import HomePanel from './components/HomePanel.jsx';
 import Navbar from './components/Navbar.jsx';
+import { statuses } from './components/StatusSelect.jsx';
 
-const statusTabs = ['All', 'Todo', 'In Progress', 'Done'];
+const statusTabs = ['All', ...statuses];
 
 export default function App() {
   const [events, setEvents] = useState(getSavedEvents);
@@ -22,33 +23,28 @@ export default function App() {
     localStorage.setItem('taskFiveEvents', JSON.stringify(events));
   }, [events]);
 
-  const filteredEvents = events.filter(event => {
-    const matchesSearch = event.name.toLowerCase().includes(search.toLowerCase());
-    const matchesTab = tab === 'All' || event.status === tab;
-    return matchesSearch && matchesTab;
-  });
+  const filteredEvents = events.filter(event =>
+    event.name.toLowerCase().includes(search.toLowerCase())
+      && (tab === 'All' || event.status === tab)
+  );
 
   const addEvent = event => {
     setEvents([...events, { id: crypto.randomUUID(), ...event }]);
   };
 
   const updateEvent = updatedEvent => {
-    const nextEvents = events.map(event => (
+    setEvents(events.map(event => (
       event.id === updatedEvent.id ? updatedEvent : event
-    ));
-
-    setEvents(nextEvents);
+    )));
     setEditingEvent(null);
     setSelectedIds([]);
   };
 
-  const toggleSelected = id => {
-    if (selectedIds.includes(id)) {
-      setSelectedIds(selectedIds.filter(selectedId => selectedId !== id));
-    } else {
-      setSelectedIds([...selectedIds, id]);
-    }
-  };
+  const toggleSelected = id => setSelectedIds(
+    selectedIds.includes(id)
+      ? selectedIds.filter(selectedId => selectedId !== id)
+      : [...selectedIds, id]
+  );
 
   const toggleAllVisible = () => {
     const visibleIds = filteredEvents.map(event => event.id);
@@ -115,11 +111,7 @@ export default function App() {
       </div>
 
       {editingEvent && (
-        <EditForm
-          event={editingEvent}
-          onCancel={() => setEditingEvent(null)}
-          onSave={updateEvent}
-        />
+        <EditForm event={editingEvent} onCancel={() => setEditingEvent(null)} onSave={updateEvent} />
       )}
 
       {showDeletePopup && (

@@ -1,3 +1,6 @@
+const columns = ['select', 'key', 'name', 'status'];
+const headings = ['Key', 'Name', 'Status'];
+
 export default function EventList({
   events,
   selectedIds,
@@ -23,12 +26,7 @@ export default function EventList({
   return (
     <div className="table-card">
       <table>
-        <colgroup>
-          <col className="select-col" />
-          <col className="key-col" />
-          <col className="name-col" />
-          <col className="status-col" />
-        </colgroup>
+        <colgroup>{columns.map(column => <col className={`${column}-col`} key={column} />)}</colgroup>
 
         <thead>
           <tr>
@@ -42,9 +40,7 @@ export default function EventList({
                 aria-label="Select all visible events"
               />
             </th>
-            <th>Key</th>
-            <th>Name</th>
-            <th>Status</th>
+            {headings.map(heading => <th key={heading}>{heading}</th>)}
           </tr>
         </thead>
 
@@ -65,28 +61,19 @@ export default function EventList({
                 <td className="key-cell">{index + 1}</td>
                 <td className="name-cell">{event.name}</td>
                 <td className="status-cell">
-                  <span className={`badge ${getStatusClass(event.status)}`}>
-                    {event.status}
-                  </span>
+                  <span className={`badge ${getStatusClass(event.status)}`}>{event.status}</span>
                 </td>
               </tr>
             ))
           ) : (
-            <tr>
-              <td className="empty-row" colSpan="4">No events found</td>
-            </tr>
+            <tr><td className="empty-row" colSpan="4">No events found</td></tr>
           )}
         </tbody>
       </table>
 
       {selectedCount > 0 && (
         <div className="bulk-action-popover">
-          <button
-            className="bulk-close"
-            type="button"
-            onClick={onClearSelected}
-            aria-label="Clear selected events"
-          >
+          <button className="bulk-close" type="button" onClick={onClearSelected} aria-label="Clear selected events">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="m6 6 12 12M18 6 6 18" />
             </svg>

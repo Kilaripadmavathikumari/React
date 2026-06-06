@@ -14,9 +14,7 @@ export default function EventList({
   return (
     <div className="table-card">
       <table>
-        <colgroup>
-          {columns.map(column => <col key={column} className={`${column}-col`} />)}
-        </colgroup>
+        <colgroup>{columns.map(column => <col key={column} className={`${column}-col`} />)}</colgroup>
 
         <thead>
           <tr>
@@ -72,9 +70,7 @@ function EventRow({ event, index, isSelected, onToggleSelected, onEdit }) {
       <td className="key-cell">{index + 1}</td>
       <td className="name-cell">{event.name}</td>
       <td className="status-cell">
-        <span className={`badge ${event.status.toLowerCase().replaceAll(' ', '-')}`}>
-          {event.status}
-        </span>
+        <span className={`badge ${event.status.toLowerCase().replaceAll(' ', '-')}`}>{event.status}</span>
       </td>
       <td className="actions-cell">
         <div className="actions">

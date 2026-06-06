@@ -6,6 +6,9 @@ import EventList from './components/EventList.jsx';
 import HomePanel from './components/HomePanel.jsx';
 import Navbar from './components/Navbar.jsx';
 import Sidebar from './components/Sidebar.jsx';
+import { statuses } from './components/StatusSelect.jsx';
+
+const statusTabs = ['All', ...statuses];
 
 export default function App() {
   const [events, setEvents] = useState(getSavedEvents);
@@ -30,6 +33,7 @@ export default function App() {
   const updateEvent = updatedEvent => {
     setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
     setEditingEvent(null);
+    setSelectedIds([]);
   };
 
   const toggleSelected = id =>
@@ -98,22 +102,16 @@ export default function App() {
       </div>
 
       {editingEvent && (
-        <EditForm
-          event={editingEvent}
-          onCancel={() => setEditingEvent(null)}
-          onSave={updateEvent}
-        />
+        <EditForm event={editingEvent} onCancel={() => setEditingEvent(null)} onSave={updateEvent} />
       )}
     </div>
   );
 }
 
 function StatusTabs({ active, onChange }) {
-  const tabs = ['All', 'Todo', 'Done', 'In Progress'];
-
   return (
     <div className="tabs">
-      {tabs.map(tab => (
+      {statusTabs.map(tab => (
         <button
           key={tab}
           className={active === tab ? 'tab active' : 'tab'}

@@ -6,12 +6,7 @@ function EventList({ events, onEdit, onDelete }) {
   return (
     <div className="list">
       {events.map((event) => (
-        <EventCard
-          key={event.id}
-          event={event}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        <EventCard key={event.id} event={event} onEdit={onEdit} onDelete={onDelete} />
       ))}
     </div>
   )
